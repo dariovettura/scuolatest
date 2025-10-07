@@ -1,0 +1,15 @@
+.card-vertical-thumb .card-body {
+  flex-direction: column-reverse;
+}
+.card-vertical-thumb .card-body .card-content {
+flex-grow:1;
+  min-height: auto;
+}
+.card-vertical-thumb .card-body .card-thumb {
+  height: 152px;
+  width: 100%;
+}
+.card-vertical-thumb .card-body .card-thumb img {
+  object-fit: cover;
+  height: 100%;
+}

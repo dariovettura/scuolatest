@@ -1,0 +1,60 @@
+/*!
+Theme Name: MyPortal School - Design Scuole Italia
+Author: Dipartimento per la trasformazione digitale - Presidenza del Consiglio dei Ministri
+Description: Design Scuole Italia è il tema di WordPress per i siti delle Scuole Italiane. Rispetta le linee guida di design dell’Agenzia per l’Italia digitale rilasciare dal Team per la Trasformazione Digitale. Utilizza Bootstrap Italia. Basato sul precedente lavoro di Marco Buttarini.
+Version: 2.2.6
+License: AGPL 3.0 or later
+Text Domain: design_scuole_italia
+*/
+/*!
+Template:	design-scuole-wordpress-theme-main
+*/
+/** immagini e allineamenti wp **/
+/* =WordPress Core
+-------------------------------------------------------------- */
+
+.accordion-large .accordion-content p {
+	font-size: 1.13rem;
+	font-weight: 600;
+  line-height: 1.52;
+}
+.header-social a svg {
+   margin: 10px;
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+.header-social span {
+  font-weight: 600;
+  padding: 10px;
+}
+.footer-list ul li {
+  margin: 10px;
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+.footer-social a svg {
+   margin: 10px;
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+.responsive-tabs ul li a{
+  margin: 10px;
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+.r-tabs .r-tabs-accordion-title {
+  margin: 10px;
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+
