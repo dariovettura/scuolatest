@@ -142,6 +142,7 @@ if(!function_exists("dsi_get_user_avatar")){
 
 add_filter( 'get_avatar' , 'dsi_custom_avatar' , 1 , 5 );
 
+if(!function_exists("dsi_custom_avatar")) {
 function dsi_custom_avatar( $avatar, $id_or_email, $size, $default, $alt ) {
     $user = false;
 
@@ -174,6 +175,7 @@ function dsi_custom_avatar( $avatar, $id_or_email, $size, $default, $alt ) {
     }
 
     return $avatar;
+}
 }
 
 
@@ -1118,7 +1120,7 @@ if(!function_exists("dsi_get_img_from_url")) {
 // Returns an img tag with appropriate attributes from ID & URL
 if(!function_exists("dsi_get_img_from_id_url")) {
     function dsi_get_img_from_id_url( $id, $url, $classes = '', $show_title = false) {
-        $image_alt = get_post_meta( $id, '_wp_attachment_image_alt', true);
+        $image_alt = get_post_meta( $id, '_wp_attachment_image_alt', true)?: 'avatar';
         $image_title = get_the_title( $id );
         if ($url) {
             $url_parts = parse_url($url);

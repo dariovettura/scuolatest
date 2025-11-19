@@ -118,6 +118,12 @@ if(!function_exists("dsi_get_user_avatar")){
 		if(!$user && is_user_logged_in()){
 			$user = wp_get_current_user();
 		}
+        
+        $privacy_hidden = get_user_meta( $user->ID, '_dsi_persona_privacy_hidden', true);
+        
+        if(!$privacy_hidden || $privacy_hidden == "true")
+            return get_avatar_url( $user->ID, array("size" => $size, "force_default" => true) );
+
         $foto_id = null;
 		$foto_url = get_the_author_meta('_dsi_persona_foto', $user->ID);
 		if($foto_url)
@@ -134,41 +140,40 @@ if(!function_exists("dsi_get_user_avatar")){
 }
 
 
-if(!function_exists("dsi_custom_avatar")) {
-    function dsi_custom_avatar( $avatar, $id_or_email, $size, $default, $alt ) {
-        $user = false;
+add_filter( 'get_avatar' , 'dsi_custom_avatar' , 1 , 5 );
 
-        if ( is_numeric( $id_or_email ) ) {
+function dsi_custom_avatar( $avatar, $id_or_email, $size, $default, $alt ) {
+    $user = false;
 
-            $id = (int) $id_or_email;
+    if ( is_numeric( $id_or_email ) ) {
+
+        $id = (int) $id_or_email;
+        $user = get_user_by( 'id' , $id );
+
+    } elseif ( is_object( $id_or_email ) ) {
+
+        if ( ! empty( $id_or_email->user_id ) ) {
+            $id = (int) $id_or_email->user_id;
             $user = get_user_by( 'id' , $id );
-
-        } elseif ( is_object( $id_or_email ) ) {
-
-            if ( ! empty( $id_or_email->user_id ) ) {
-                $id = (int) $id_or_email->user_id;
-                $user = get_user_by( 'id' , $id );
-            }
-
-        } else {
-            $user = get_user_by( 'email', $id_or_email );
         }
 
-        if ( $user && is_object( $user ) ) {
-
-            $foto_url = get_the_author_meta('_dsi_persona_foto', $user->ID);
-            if($foto_url)
-                $foto_id = attachment_url_to_postid($foto_url);
-
-            if(isset($foto_id) && $foto_id) {
-                $avatar = wp_get_attachment_image_url($foto_id, "item-thumb");
-                $avatar = "<img alt='{$alt}' src='{$avatar}' class='avatar avatar-{$size} photo' height='{$size}' width='{$size}' />";
-            }
-        }
-
-        return $avatar;
+    } else {
+        $user = get_user_by( 'email', $id_or_email );
     }
-    add_filter( 'get_avatar' , 'dsi_custom_avatar' , 1 , 5 );
+
+    if ( $user && is_object( $user ) ) {
+
+        $foto_url = get_the_author_meta('_dsi_persona_foto', $user->ID);
+        if($foto_url)
+            $foto_id = attachment_url_to_postid($foto_url);
+
+        if(isset($foto_id) && $foto_id) {
+            $avatar = wp_get_attachment_image_url($foto_id, "item-thumb");
+            $avatar = "<img alt='{$alt}' src='{$avatar}' class='avatar avatar-{$size} photo' height='{$size}' width='{$size}' />";
+        }
+    }
+
+    return $avatar;
 }
 
 
@@ -388,59 +393,57 @@ if(!function_exists("dsi_get_mapbox_access_token")) {
  * @param $post
  *
  */
-if(!function_exists("dsi_get_date_evento")) {
-	function dsi_get_date_evento($post){
-		if($post->post_type == "evento")
-			$prefix = '_dsi_evento_';
-		else if($post->post_type == "scheda_progetto")
-			$prefix = '_dsi_scheda_progetto_';
+function dsi_get_date_evento($post){
+	if($post->post_type == "evento")
+		$prefix = '_dsi_evento_';
+	else if($post->post_type == "scheda_progetto")
+		$prefix = '_dsi_scheda_progetto_';
 
-		$ret = "";
-		$timestamp_inizio = dsi_get_meta("timestamp_inizio", $prefix, $post->ID);
-		$timestamp_fine= dsi_get_meta("timestamp_fine", $prefix, $post->ID);
-		if($timestamp_inizio >= $timestamp_fine){
-			$ret .=  date_i18n("j F Y", $timestamp_inizio);
-			//$ret .= __(" alle ", "design_scuole_italia");
-			//$ret .=  date_i18n("H:i", $timestamp_inizio);
-			return $ret;
-		}
-
-		$data_inizio = date_i18n("j F Y", $timestamp_inizio);
-		$data_fine = date_i18n("j F Y", $timestamp_fine);
-		$ora_inizio = date_i18n("H:i", $timestamp_inizio);
-		$ora_fine = date_i18n("H:i", $timestamp_fine);
-		if($data_inizio == $data_fine){
-			$ret .= __("Il ", "design_scuole_italia");
-			$ret .= $data_inizio;
-			/*
-			if($post->post_type == "evento"){
-				$ret .= __(" dalle ", "design_scuole_italia");
-				$ret .= $ora_inizio;
-				$ret .= __(" alle ", "design_scuole_italia");
-				$ret .= $ora_fine;
-
-			}*/
-
-		}else{
-			$ret .= __("dal ", "design_scuole_italia");
-			$ret .= $data_inizio;
-			/*
-			if($post->post_type == "evento") {
-				$ret .= __( " alle ", "design_scuole_italia" );
-				$ret .= $ora_inizio;
-			}*/
-			$ret .= __(" al ", "design_scuole_italia");
-			$ret .= $data_fine;
-			/*
-			if($post->post_type == "evento") {
-				$ret .= __( " alle ", "design_scuole_italia" );
-				$ret .= $ora_fine;
-			}*/
-		}
-
+	$ret = "";
+	$timestamp_inizio = dsi_get_meta("timestamp_inizio", $prefix, $post->ID);
+	$timestamp_fine= dsi_get_meta("timestamp_fine", $prefix, $post->ID);
+	if($timestamp_inizio >= $timestamp_fine){
+		$ret .=  date_i18n("j F Y", $timestamp_inizio);
+		//$ret .= __(" alle ", "design_scuole_italia");
+		//$ret .=  date_i18n("H:i", $timestamp_inizio);
 		return $ret;
-
 	}
+
+	$data_inizio = date_i18n("j F Y", $timestamp_inizio);
+	$data_fine = date_i18n("j F Y", $timestamp_fine);
+	$ora_inizio = date_i18n("H:i", $timestamp_inizio);
+	$ora_fine = date_i18n("H:i", $timestamp_fine);
+	if($data_inizio == $data_fine){
+		$ret .= __("Il ", "design_scuole_italia");
+		$ret .= $data_inizio;
+		/*
+		if($post->post_type == "evento"){
+			$ret .= __(" dalle ", "design_scuole_italia");
+			$ret .= $ora_inizio;
+			$ret .= __(" alle ", "design_scuole_italia");
+			$ret .= $ora_fine;
+
+		}*/
+
+	}else{
+		$ret .= __("dal ", "design_scuole_italia");
+		$ret .= $data_inizio;
+		/*
+		if($post->post_type == "evento") {
+			$ret .= __( " alle ", "design_scuole_italia" );
+			$ret .= $ora_inizio;
+		}*/
+		$ret .= __(" al ", "design_scuole_italia");
+		$ret .= $data_fine;
+		/*
+		if($post->post_type == "evento") {
+			$ret .= __( " alle ", "design_scuole_italia" );
+			$ret .= $ora_fine;
+		}*/
+	}
+
+	return $ret;
+
 }
 
 
@@ -464,7 +467,6 @@ if(!function_exists("dsi_get_date_evento")) {
  *       echo bootstrap_pagination($query);
  *     ?>
  */
-if(!function_exists("dsi_bootstrap_pagination")) {
 function dsi_bootstrap_pagination( \WP_Query $wp_query = null, $echo = true ) {
 	if ( null === $wp_query ) {
 		global $wp_query;
@@ -519,7 +521,6 @@ function dsi_bootstrap_pagination( \WP_Query $wp_query = null, $echo = true ) {
 	}
 	return null;
 }
-}
 
 
 /**
@@ -528,7 +529,6 @@ function dsi_bootstrap_pagination( \WP_Query $wp_query = null, $echo = true ) {
  *
  * @return array
  */
-if(!function_exists("dsi_get_post_types_grouped")) {
 function dsi_get_post_types_grouped($type = "", $tag = false){
 	if($type == "")
 		$type = "any";
@@ -543,15 +543,7 @@ function dsi_get_post_types_grouped($type = "", $tag = false){
 	else
 		$post_types = array("evento", "post","circolare", "documento", "luogo", "scheda_didattica", "scheda_progetto", "servizio", "indirizzo", "struttura", "page", "amm-trasparente"); // todo: programma materia $post_types = array("evento", "post","circolare", "documento", "luogo", "materia", "programma_materia", "scheda_didattica", "scheda_progetto", "servizio", "struttura", "page");
 
-	// rimuovo post types che non hanno la categoria
-	if($tag){
-		if (($key = array_search("page", $post_types)) !== false) {
-			unset($post_types[$key]);
-		}
-
-	}
 	return $post_types;
-}
 }
 
 
@@ -562,7 +554,6 @@ function dsi_get_post_types_grouped($type = "", $tag = false){
  * @return string
  *
  */
-if(!function_exists("dsi_get_post_types_group")) {
 function dsi_get_post_types_group($post_type){
 	$group = "news";
 	if(in_array($post_type, array("documento", "luogo", "struttura", "page"))) // todo: programma materia if(in_array($post_type, array("documento", "luogo", "programma_materia", "struttura", "page")))
@@ -575,7 +566,6 @@ function dsi_get_post_types_group($post_type){
 
 	return $group;
 }
-}
 
 /**
  * @param $post_type
@@ -583,7 +573,6 @@ function dsi_get_post_types_group($post_type){
  * ritorna il gruppo in italiano
  * @return string
  */
-if(!function_exists("dsi_get_italian_name_group")) {
 function dsi_get_italian_name_group($group) {
 	$gruppo = "Novità";
 	if($group == "school")
@@ -595,7 +584,6 @@ function dsi_get_italian_name_group($group) {
 	
     return $gruppo;
 }
-}
 
 /**
  * @param $post_type
@@ -603,7 +591,6 @@ function dsi_get_italian_name_group($group) {
  * ritorna il suffisso della classe relativa al colore
  * @return string
  */
-if(!function_exists("dsi_get_post_types_color_class")) {
 function dsi_get_post_types_color_class($post_type) {
 	$class = "greendark";
 	$group = dsi_get_post_types_group($post_type);
@@ -615,7 +602,6 @@ function dsi_get_post_types_color_class($post_type) {
 		$class = "purplelight";
 	return $class;
 }
-}
 
 /**
  * @param $post_type
@@ -623,7 +609,6 @@ function dsi_get_post_types_color_class($post_type) {
  * ritorna il nome dell'svg utilizzato per la preview del post type
  * @return string
  */
-if(!function_exists("dsi_get_post_types_icon_class")) {
 function dsi_get_post_types_icon_class($post_type) {
 	$icon = "newspaper";
 	$group = dsi_get_post_types_group($post_type);
@@ -638,7 +623,6 @@ function dsi_get_post_types_icon_class($post_type) {
 		$icon = "generic-document";
 		return $icon;
 }
-}
 
 
 /**
@@ -649,7 +633,6 @@ function dsi_get_post_types_icon_class($post_type) {
  *
  * @return bool|int
  */
-if(!function_exists("dsi_count_grouped_posts")) {
 function dsi_count_grouped_posts($post_types){
 	if(!is_array($post_types))
 		return false;
@@ -662,7 +645,6 @@ function dsi_count_grouped_posts($post_types){
 	return $count;
 
 }
-}
 
 /**
  * recupera la url del template in base al nome
@@ -670,7 +652,6 @@ function dsi_count_grouped_posts($post_types){
  *
  * @return string|null
  */
-if(!function_exists("dsi_get_template_page_url")) {
 function dsi_get_template_page_url($TEMPLATE_NAME){
 	$pages = get_pages(array(
 		'meta_key' => '_wp_page_template',
@@ -686,7 +667,6 @@ function dsi_get_template_page_url($TEMPLATE_NAME){
     }
 	return null;
 }
-}
 
 /**
  * recupera id page template in base al nome
@@ -694,7 +674,6 @@ function dsi_get_template_page_url($TEMPLATE_NAME){
  *
  * @return string|null
  */
-if(!function_exists("dsi_get_template_page_id")) {
 function dsi_get_template_page_id($TEMPLATE_NAME){
     $url = null;
     $pages = get_pages(array(
@@ -711,13 +690,11 @@ function dsi_get_template_page_id($TEMPLATE_NAME){
 
     return 0;
 }
-}
 
 /**
  * ritorna l'array dei feedback delle circolari
  * @return array
  */
-if(!function_exists("dsi_get_circolari_feedback_options")) {
 function dsi_get_circolari_feedback_options(){
     return array(
         "false" => __('Nessun Feedback ', 'design_scuole_italia'),
@@ -726,7 +703,6 @@ function dsi_get_circolari_feedback_options(){
         'si_no_visione' => __('Si / No / Presa Visione', 'design_scuole_italia'),
     );
 }
-}
 
 /**
  * controlla se l'utente è abilitato a firmare la circolare
@@ -734,7 +710,6 @@ function dsi_get_circolari_feedback_options(){
  * @param $post
  * @return bool
  */
-if(!function_exists("dsi_user_can_sign_circolare")) {
 function dsi_user_can_sign_circolare($user, $post){
 
     $destinatari_circolari = dsi_get_meta("destinatari_circolari", "", $post->ID);
@@ -756,7 +731,6 @@ function dsi_user_can_sign_circolare($user, $post){
 
     return false;
 }
-}
 
 
 /**
@@ -765,7 +739,6 @@ function dsi_user_can_sign_circolare($user, $post){
  * @param $post
  * @return bool
  */
-if(!function_exists("dsi_user_has_signed_circolare")) {
 function dsi_user_has_signed_circolare($user, $post){
     $signed = get_post_meta($post->ID, "_dsi_has_signed", true);
     if(!$signed)
@@ -779,14 +752,12 @@ function dsi_user_has_signed_circolare($user, $post){
     }
     return false;
 }
-}
 
 /**
  * check if is circolare
  * @param $post
  * @return bool
  */
-if(!function_exists("dsi_is_circolare")) {
 function dsi_is_circolare($post){
 
     if($post->post_type == "circolare")
@@ -794,7 +765,6 @@ function dsi_is_circolare($post){
 
     return false;
 }
-}
 
 
 /**
@@ -802,7 +772,6 @@ function dsi_is_circolare($post){
  * @param $post
  * @return bool
  */
-if(!function_exists("dsi_is_albo")) {
 function dsi_is_albo($post){
 
     if(has_term("albo-online", "tipologia-documento", $post))
@@ -810,12 +779,10 @@ function dsi_is_albo($post){
 
     return false;
 }
-}
 
 /**
  * Converte l'anno scolastico nel formato da stampare
  */
-if(!function_exists("dsi_convert_anno_scuola")) {
 function dsi_convert_anno_scuola($anno){
     if(is_int($anno)) {
         $nextanno = $anno + 1;
@@ -825,21 +792,18 @@ function dsi_convert_anno_scuola($anno){
     }
 
 }
-}
 
 /**
  * controllo se una struttura è una scuola
  * @param $post
  * @return bool
  */
-if(!function_exists("dsi_is_scuola")) {
 function dsi_is_scuola($post){
 
     if(has_term("scuola", "tipologia-struttura", $post))
         return true;
 
     return false;
-}
 }
 
 
@@ -848,7 +812,6 @@ function dsi_is_scuola($post){
  * @param bool $year
  * @return false|int|string
  */
-if(!function_exists("dsi_get_current_anno_scolastico")) {
 function dsi_get_current_anno_scolastico($year = true){
     $today_month = date("n");
     if($today_month > 6){
@@ -857,7 +820,6 @@ function dsi_get_current_anno_scolastico($year = true){
         if($year) return date("Y")-1; else return dsi_convert_anno_scuola(date("Y")-1);
     }
 
-}
 }
 
 
@@ -868,7 +830,6 @@ function dsi_get_current_anno_scolastico($year = true){
  * @param $field
  * @return int|string
  */
-if(!function_exists("dsi_sanitize_int")) {
 function dsi_sanitize_int( $value, $field_args, $field ) {
     // Don't keep anything that's not numeric
     if ( ! is_numeric( $value ) ) {
@@ -878,7 +839,6 @@ function dsi_sanitize_int( $value, $field_args, $field ) {
         $sanitized_value = absint( $value );
     }
     return $sanitized_value;
-}
 }
 
 
@@ -1020,18 +980,9 @@ if(!function_exists("dsi_pluralize_string")) {
  * funzione per la gestione del nome autore
  */
 
-if(!function_exists("dsi_get_display_name")) {
-function dsi_get_display_name($user_id){
-
+ function dsi_get_display_name($user_id){
     $display = get_the_author_meta('display_name', $user_id);
-    $nome = get_the_author_meta('first_name', $user_id);
-    $cognome = get_the_author_meta('last_name', $user_id);
-    if(($nome != "") && ($cognome != ""))
-        return $nome." ".$cognome;
-    else
-        return $display;
-
-}
+    return $display;
 }
 
 
@@ -1237,5 +1188,60 @@ if(!function_exists("dsi_get_img_thumbnails")) {
         );
         
         return $thumbnails;
+    }
+}
+
+if(!function_exists("dsi_get_progetti_in_luogo")) {
+    /**
+     * Gets all scheda_progetto posts that are associated to the given luogo.
+     * @param int|string $luogo_id ID of luogo post
+     * @return WP_Post[] Array of scheda_progetto posts
+     */
+    function dsi_get_progetti_in_luogo($luogo_id)
+    {
+        $args = array(
+            'post_type' => 'scheda_progetto',
+            'numberposts' => -1,
+            'post_status' => 'publish',
+            'meta_query' => [
+                'relation' => 'AND',
+                [
+                    'key' => '_dsi_scheda_progetto_is_luogo_scuola',
+                    'value'   => 'true',
+                ],
+                [
+                    'relation' => 'OR',
+                    [
+                        'key' => '_dsi_scheda_progetto_link_schede_luoghi',
+                        'value'   => serialize(strval($luogo_id)), // Saved as string
+                        'compare' => 'LIKE'
+                    ],
+                    [
+                        'key' => '_dsi_scheda_progetto_link_schede_luoghi',
+                        'value'   => serialize(intval($luogo_id)), // Saved as integer. Could collide with serialized array indexes in the array
+                        'compare' => 'LIKE'
+                    ],
+                ]
+            ],
+        );
+        $progetti = get_posts($args);
+    
+        //filter progetti by checking that the luogo id is actually in the luoghi array and was not just an index collision in the query
+        $progetti = array_filter($progetti, fn ($progetto) => in_array($luogo_id, get_post_meta($progetto->ID, '_dsi_scheda_progetto_link_schede_luoghi', true)));
+    
+        return $progetti;
+    }
+}
+
+
+
+if (!function_exists("dsi_get_page_by_title")) {
+    function dsi_get_page_by_title( $page_title ) {
+        return (new WP_Query([
+            'post_type' => 'page',
+            'title'     => $page_title,
+            'post_status' => 'publish',
+            'posts_per_page' => 1,
+        ]))->post;
     }
 }

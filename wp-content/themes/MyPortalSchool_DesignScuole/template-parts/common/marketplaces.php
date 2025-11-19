@@ -15,10 +15,10 @@
                 <p class="col-lg-6 col-md-12 msg text-center mb-sm-3 mb-md-3 mb-lg-0">Scarica la nostra app ufficiale su:</p>
                 <div class="col-lg-6 col-md-12 text-center">
                     <?php if(!!$app_store_id) { ?>
-                        <a href="https://apps.apple.com/it/app/myp/id<?= $app_store_id; ?>" target="_blank" class="marketplace btn btn-sm btn-outline-white ml-2 mr-2" role="link"><img src="<?= get_stylesheet_directory_uri() . '/assets/icons/icon-app-store.svg'; ?>"> App Store</a>
+                        <a href="https://apps.apple.com/it/app/myp/id<?= $app_store_id; ?>" target="_blank" class="marketplace btn btn-sm btn-outline-white ml-2 mr-2" role="link"><img src="<?= get_stylesheet_directory_uri() . '/assets/icons/icon-app-store.svg'; ?>" alt="App Store"> App Store</a>
                     <?php } ?>
                     <?php if(!!$android_app_package_name) { ?>
-                        <a href="https://play.google.com/store/apps/details?id=<?= $android_app_package_name; ?>" target="_blank" class="marketplace btn btn-sm btn-outline-white ml-2 mr-2" role="link"><img src="<?= get_stylesheet_directory_uri() . '/assets/icons/icon-play-store.svg'; ?>"> Play Store</a>
+                        <a href="https://play.google.com/store/apps/details?id=<?= $android_app_package_name; ?>" target="_blank" class="marketplace btn btn-sm btn-outline-white ml-2 mr-2" role="link"><img src="<?= get_stylesheet_directory_uri() . '/assets/icons/icon-play-store.svg'; ?>" alt="Play Store"> Play Store</a>
                     <?php } ?>
                     <?php
                         /*
