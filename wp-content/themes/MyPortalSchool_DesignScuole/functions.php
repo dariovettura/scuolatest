@@ -1,5 +1,53 @@
 <?php
 
+/**
+ * Override robusto delle utility del parent:
+ * - evita check Members con post_id vuoto
+ * - usa il prefisso in base al post type reale (non is_singular corrente)
+ */
+if ( ! function_exists( 'dsi_members_can_user_view_post' ) ) {
+	function dsi_members_can_user_view_post( $user_id, $post_id ) {
+		if ( empty( $post_id ) ) {
+			$post_id = get_the_ID();
+		}
+
+		if ( ! function_exists( 'members_can_user_view_post' ) ) {
+			return true;
+		}
+
+		return members_can_user_view_post( $user_id, $post_id );
+	}
+}
+
+if ( ! function_exists( 'dsi_get_meta' ) ) {
+	function dsi_get_meta( $key = '', $prefix = '', $post_id = '' ) {
+		if ( empty( $post_id ) ) {
+			$post_id = get_the_ID();
+		}
+
+		if ( ! dsi_members_can_user_view_post( get_current_user_id(), $post_id ) ) {
+			return false;
+		}
+
+		if ( $prefix !== '' ) {
+			return get_post_meta( $post_id, $prefix . $key, true );
+		}
+
+		$post_type = get_post_type( $post_id );
+		if ( ! $post_type ) {
+			return get_post_meta( $post_id, $key, true );
+		}
+
+		// Eccezione: il post type `post` viene memorizzato con prefisso `_dsi_articolo_`.
+		if ( $post_type === 'post' ) {
+			$computed_prefix = '_dsi_articolo_';
+		} else {
+			$computed_prefix = '_dsi_' . $post_type . '_';
+		}
+
+		return get_post_meta( $post_id, $computed_prefix . $key, true );
+	}
+}
 
 ////////////////////////////////////////////////////////////////////
 // Blocco x-frame - X-XSS-Protection - X-Content-Type-Options
@@ -255,8 +303,6 @@ function wporg_web_editor_role() {
 		'edit_posts' => true,
 		'edit_private_posts' => true,
 		'edit_published_posts' => true,
-		'manage_categories' => true,
-		'moderate_comments' => true,
 		'publish_posts' => true,
 		'read_private_posts' => true,
 //Pagine		
@@ -473,8 +519,6 @@ function wporg_web_manager_role() {
 		'edit_posts' => true,
 		'edit_private_posts' => true,
 		'edit_published_posts' => true,
-		'manage_categories' => true,
-		'moderate_comments' => true,
 		'publish_posts' => true,
 		'read_private_posts' => true,
 //Pagine		
@@ -695,8 +739,6 @@ function wporg_web_admin_role() {
 		'edit_posts' => true,
 		'edit_private_posts' => true,
 		'edit_published_posts' => true,
-		'manage_categories' => true,
-		'moderate_comments' => true,
 		'publish_posts' => true,
 		'read_private_posts' => true,
 //Pagine		
