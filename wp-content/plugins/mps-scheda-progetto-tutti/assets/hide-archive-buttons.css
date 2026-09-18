@@ -1,0 +1,13 @@
+/**
+ * Nasconde i pulsanti "Consulta i progetti dell'anno in corso / degli scorsi anni"
+ * sull'archivio /scheda-progetto/.
+ */
+
+body.post-type-archive-scheda_progetto .col-lg-7 > p:has(> a.btn.btn-secondary[href*="scheda-progetto"]) {
+	display: none !important;
+}
+
+/* Fallback senza :has (nasconde solo il link; il <p> resta vuoto ma invisibile di fatto) */
+body.post-type-archive-scheda_progetto .col-lg-7 > p > a.btn.btn-secondary[href*="scheda-progetto"] {
+	display: none !important;
+}
