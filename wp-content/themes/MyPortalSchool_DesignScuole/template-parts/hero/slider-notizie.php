@@ -113,7 +113,14 @@ if ($img_identita == "") {
                     $descrizione = get_the_excerpt($post);
                   }
 
-                  $autore = get_the_author_meta('display_name', $post->post_author);
+                  $privacy_hidden = get_user_meta( $post->post_author, '_dsi_persona_privacy_hidden', true );
+                  if ( $privacy_hidden === 'false' ) {
+                    $autore = function_exists( 'dsi_get_display_name' )
+                      ? dsi_get_display_name( $post->post_author )
+                      : get_the_author_meta( 'display_name', $post->post_author );
+                  } else {
+                    $autore = __( 'Personale scolastico', 'design_scuole_italia' );
+                  }
                   ?>
 
                   <li class="splide__slide">
