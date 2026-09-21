@@ -23,7 +23,14 @@ if ( ! is_array( $home_articoli_manuali ) || ! count( $home_articoli_manuali ) )
     background-color: #fff !important;
     box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
     border-radius: 4px;
+    overflow: visible;
+    position: relative;
+    margin-bottom: 2rem;
+  }
+
+  .section-carousel-after-hero .home-carousel .splide__track {
     overflow: hidden;
+    border-radius: 4px;
   }
 
   .section-carousel-after-hero .home-carousel .it-single-slide-wrapper a.read-more:before {
@@ -49,7 +56,52 @@ if ( ! is_array( $home_articoli_manuali ) || ! count( $home_articoli_manuali ) )
   }
 
   .section-carousel-after-hero .home-carousel.it-carousel-wrapper.it-carousel-landscape-abstract .splide__pagination {
-    margin-bottom: 5px !important;
+    bottom: -1.75rem !important;
+    margin-bottom: 0 !important;
+  }
+
+  @media (min-width: 992px) {
+    .section-carousel-after-hero .home-carousel.it-carousel-wrapper {
+      height: 360px;
+    }
+
+    .section-carousel-after-hero .home-carousel .splide__track,
+    .section-carousel-after-hero .home-carousel .splide__list,
+    .section-carousel-after-hero .home-carousel .splide__slide,
+    .section-carousel-after-hero .home-carousel .it-single-slide-wrapper {
+      height: 100%;
+    }
+
+    .section-carousel-after-hero .home-carousel .it-single-slide-wrapper {
+      display: flex;
+      align-items: stretch;
+    }
+
+    .section-carousel-after-hero .home-carousel .it-text-slider-wrapper-outside {
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
+
+    .section-carousel-after-hero .home-carousel .it-text-slider-wrapper-outside .card-wrapper,
+    .section-carousel-after-hero .home-carousel .it-text-slider-wrapper-outside .card,
+    .section-carousel-after-hero .home-carousel .it-text-slider-wrapper-outside .card-body {
+      height: auto;
+      width: 100%;
+    }
+
+    .section-carousel-after-hero .home-carousel .img-responsive-wrapper,
+    .section-carousel-after-hero .home-carousel .img-responsive,
+    .section-carousel-after-hero .home-carousel .img-wrapper {
+      height: 360px;
+    }
+
+    .section-carousel-after-hero .home-carousel .img-wrapper img,
+    .section-carousel-after-hero .home-carousel .img-wrapper .placeholder-svg {
+      width: 100%;
+      height: 360px;
+      object-fit: cover;
+    }
   }
 </style>
 <section class="section bg-white section-carousel-after-hero">
