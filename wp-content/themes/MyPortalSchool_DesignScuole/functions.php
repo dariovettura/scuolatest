@@ -1026,3 +1026,118 @@ function custom_change_image_src($image, $attachment_id, $size, $icon) {
 	return $image;
 }
 add_filter('wp_get_attachment_image_src', 'custom_change_image_src', 10, 4);
+
+
+////////////////////////////////////////////////////////////////////
+// Ordine sezioni novità (Notizie / Circolari / Eventi) — solo child
+////////////////////////////////////////////////////////////////////
+
+/**
+ * Restituisce l'ordine configurato delle sezioni novità.
+ * Default allineato alle sezioni impilate storiche: notizie, circolari, eventi.
+ *
+ * @return string[]
+ */
+if ( ! function_exists( 'dsi_get_ordine_sezioni_novita' ) ) {
+	function dsi_get_ordine_sezioni_novita() {
+		$allowed = array( 'notizie', 'circolari', 'eventi' );
+		$default = array( 'notizie', 'circolari', 'eventi' );
+		$order   = dsi_get_option( 'home_ordine_sezioni', 'homepage', $default );
+
+		if ( ! is_array( $order ) || empty( $order ) ) {
+			return $default;
+		}
+
+		$order = array_values( array_intersect( $order, $allowed ) );
+
+		foreach ( $default as $section ) {
+			if ( ! in_array( $section, $order, true ) ) {
+				$order[] = $section;
+			}
+		}
+
+		return $order;
+	}
+}
+
+/**
+ * Render una sola volta le sezioni impilate (Notizie / Circolari / Eventi)
+ * nell'ordine configurato, caricando i markup dal parent.
+ * Così i page template non vanno modificati: basta l'override dei partial.
+ */
+if ( ! function_exists( 'mps_render_sezioni_novita_impilate_once' ) ) {
+	function mps_render_sezioni_novita_impilate_once() {
+		static $done = false;
+		if ( $done ) {
+			return;
+		}
+		$done = true;
+
+		global $post, $tipologia_notizia, $ct, $servizio;
+
+		if ( ! isset( $ct ) || $ct === null || $ct === '' ) {
+			$ct = 1;
+		}
+
+		$parent_dir = trailingslashit( get_template_directory() ) . 'template-parts/home/';
+
+		foreach ( dsi_get_ordine_sezioni_novita() as $sezione ) {
+			if ( $sezione === 'notizie' ) {
+				$tipologie_notizie = dsi_get_option( 'tipologie_notizie', 'notizie' );
+				if ( ! is_array( $tipologie_notizie ) || ! count( $tipologie_notizie ) ) {
+					continue;
+				}
+				foreach ( $tipologie_notizie as $id_tipologia_notizia ) {
+					$tipologia_notizia = get_term_by( 'id', $id_tipologia_notizia, 'tipologia-articolo' );
+					if ( ! $tipologia_notizia ) {
+						continue;
+					}
+					load_template( $parent_dir . 'notizie-tipologie.php', false );
+					$ct++;
+				}
+			}
+
+			if ( $sezione === 'circolari' ) {
+				load_template( $parent_dir . 'notizie-circolari.php', false );
+				$ct++;
+			}
+
+			if ( $sezione === 'eventi' ) {
+				load_template( $parent_dir . 'eventi.php', false );
+				$ct++;
+			}
+		}
+	}
+}
+
+/**
+ * Aggiunge il campo "Ordine sezioni novità" a Configurazione → Home,
+ * senza modificare options.php del parent.
+ */
+add_action( 'cmb2_admin_init', 'mps_register_home_ordine_sezioni_field', 20 );
+function mps_register_home_ordine_sezioni_field() {
+	if ( ! function_exists( 'cmb2_get_metabox' ) ) {
+		return;
+	}
+
+	$home_options = cmb2_get_metabox( 'dsi_options_home' );
+	if ( ! $home_options ) {
+		return;
+	}
+
+	$home_options->add_field( array(
+		'id'      => 'home_ordine_sezioni',
+		'name'    => __( 'Ordine sezioni novità', 'design_scuole_italia' ),
+		'desc'    => __( 'Seleziona e trascina per definire l\'ordine globale di Notizie, Circolari ed Eventi (fascia automatica verticale/orizzontale e sezioni impilate). La visibilità resta gestita dalle opzioni dedicate (Mostra eventi / circolari, circolari in panoramica).', 'design_scuole_italia' ),
+		'type'    => 'pw_multiselect',
+		'default' => array( 'notizie', 'circolari', 'eventi' ),
+		'options' => array(
+			'notizie'   => __( 'Notizie', 'design_scuole_italia' ),
+			'circolari' => __( 'Circolari', 'design_scuole_italia' ),
+			'eventi'    => __( 'Eventi', 'design_scuole_italia' ),
+		),
+		'attributes' => array(
+			'placeholder' => __( 'Seleziona e ordina le sezioni', 'design_scuole_italia' ),
+		),
+	) );
+}
