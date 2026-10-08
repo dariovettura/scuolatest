@@ -103,7 +103,7 @@ if(is_array($tipologie_notizie) && count($tipologie_notizie)){
                     if((count($tipologie_notizie) == 1) && ($column > 1))
                         echo '<div class="col-lg-' . (12/$column) . ' mb-4">';
 
-                    get_template_part("template-parts/single/card", "horizontal-thumb");
+                    mps_get_template_part_home_card( 'post', 'fascia_verticale', true );
 
                     if((count($tipologie_notizie) == 1) && ($column > 1))
                          echo '</div>';
@@ -184,7 +184,7 @@ if(is_array($tipologie_notizie) && count($tipologie_notizie)){
             $events_shown = count($posts);
            	$set_card_top_margin = false;
             foreach ($posts as $post) {
-                get_template_part("template-parts/single/card", "vertical-thumb-evento");
+                mps_get_template_part_home_card( 'evento', 'fascia_verticale' );
                 $set_card_top_margin = true;
             }
         } else {
@@ -216,7 +216,7 @@ if(is_array($tipologie_notizie) && count($tipologie_notizie)){
             $posts = get_posts($args);
            	$set_card_top_margin = false;
             foreach ($posts as $post) {
-                get_template_part("template-parts/single/card", "vertical-thumb-circolare");
+                mps_get_template_part_home_card( 'circolare', 'fascia_verticale' );
                 $set_card_top_margin = true;
             }
             ?>

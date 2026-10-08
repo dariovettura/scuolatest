@@ -2,7 +2,7 @@
 Theme Name: MyPortal School - Design Scuole Italia
 Author: Dipartimento per la trasformazione digitale - Presidenza del Consiglio dei Ministri
 Description: Design Scuole Italia è il tema di WordPress per i siti delle Scuole Italiane. Rispetta le linee guida di design dell’Agenzia per l’Italia digitale rilasciare dal Team per la Trasformazione Digitale. Utilizza Bootstrap Italia. Basato sul precedente lavoro di Marco Buttarini.
-Version: 2.2.6
+Version: 2.2.9
 License: AGPL 3.0 or later
 Text Domain: design_scuole_italia
 */
@@ -56,5 +56,274 @@ Template:	design-scuole-wordpress-theme-main
     margin-right: 10px;
     margin-bottom: 10px;
     margin-left: 10px;
+}
+
+/* Card preview home (immagine in alto + descrizione + argomenti) */
+.card.card-home-preview {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	height: 100%;
+	padding: 0;
+}
+.card.card-home-preview .card-home-preview__media {
+	display: block;
+	position: relative;
+	z-index: 0;
+	width: 100%;
+	aspect-ratio: 16 / 10;
+	overflow: hidden;
+	background: transparent;
+	padding: 6px;
+	box-sizing: border-box;
+}
+.card.card-home-preview .card-home-preview__media--placeholder {
+	background: #e7eaed;
+}
+.card.card-home-preview .card-home-preview__media img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: 2px;
+}
+.card.card-home-preview .card-home-preview__date {
+	position: absolute;
+	z-index: 2;
+	top: 6px;
+	left: 6px;
+	width: 72px;
+	height: 96px;
+	background-color: #51758d;
+	color: #fff;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+.card.card-home-preview .card-home-preview__date--greendark {
+	background-color: #0e865c;
+}
+.card.card-home-preview .card-home-preview__date--bluelectric {
+	background-color: #0d00ff;
+}
+.card.card-home-preview .card-home-preview__date--redbrown {
+	background-color: #d1344c;
+}
+.card.card-home-preview .card-home-preview__date--purplelight {
+	background-color: #b21dd0;
+}
+.card.card-home-preview .card-home-preview__date span {
+	display: block;
+	line-height: 1;
+}
+.card.card-home-preview .card-home-preview__date .year {
+	font-weight: 700;
+	font-size: 0.8rem;
+	letter-spacing: 2px;
+}
+.card.card-home-preview .card-home-preview__date .day {
+	font-family: "Roboto Mono", monospace;
+	font-size: 2.1rem;
+	font-weight: 400;
+	margin: 0.15rem 0;
+}
+.card.card-home-preview .card-home-preview__date .month {
+	font-size: 1.1rem;
+	font-weight: 700;
+	text-transform: lowercase;
+}
+.card.card-home-preview .card-home-preview__media--placeholder svg {
+	display: block;
+	position: absolute;
+	z-index: 1;
+	opacity: 0.12;
+	bottom: -20px;
+	right: -40px;
+	width: 200px;
+	height: 200px;
+	transform: rotate(-25deg);
+}
+.card.card-home-preview .card-home-preview__media--placeholder .icon-greendark {
+	fill: #0e865c;
+}
+.card.card-home-preview .card-home-preview__media--placeholder .icon-bluelectric {
+	fill: #0d00ff;
+}
+.card.card-home-preview .card-home-preview__media--placeholder .icon-redbrown {
+	fill: #d1344c;
+}
+.card.card-home-preview .card-home-preview__media--placeholder .icon-purplelight {
+	fill: #b21dd0;
+}
+.card.card-home-preview .card-home-preview__media--placeholder .icon-petrol {
+	fill: #51758d;
+}
+.card.card-home-preview .card-home-preview__body {
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto;
+	padding: 1rem 1.1rem 0.75rem;
+}
+.card.card-home-preview .card-home-preview__meta {
+	display: block;
+	margin: 0 0 0.35rem;
+	font-size: 0.85rem;
+	font-weight: 600;
+}
+.card.card-home-preview .card-home-preview__title {
+	margin: 0 0 0.65rem;
+	font-size: 1.15rem;
+	line-height: 1.35;
+	letter-spacing: -0.2px;
+}
+.card.card-home-preview .card-home-preview__title a {
+	color: #455b71;
+	text-decoration: none;
+}
+.card.card-home-preview .card-home-preview__excerpt {
+	margin: 0 0 0.85rem;
+	max-height: 4.5em;
+	overflow: hidden;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	font-size: 0.9rem;
+	line-height: 1.45;
+	color: #5b6f82;
+}
+.card.card-home-preview .card-home-preview__tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem;
+	margin: 0 0 0.35rem;
+}
+.card.card-home-preview .card-home-preview__tags .badge {
+	margin: 0;
+}
+.card.card-home-preview .card-home-preview__footer {
+	margin-top: auto;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.45rem 1.1rem 0.55rem;
+	border-top: 1px solid #e7eaed;
+	min-height: 0;
+}
+.card.card-home-preview .card-home-preview__footer .card-avatar-img {
+	width: 28px;
+	height: 28px;
+	flex-shrink: 0;
+	margin: 0;
+}
+.card.card-home-preview .card-home-preview__footer .card-avatar-img img {
+	width: 28px;
+	height: 28px;
+	object-fit: cover;
+	border-radius: 50%;
+}
+.card.card-home-preview .card-home-preview__footer .card-avatar-content {
+	padding: 0;
+	margin: 0;
+	line-height: 1.2;
+}
+.card.card-home-preview .card-home-preview__footer .card-avatar-content p {
+	margin: 0;
+	font-size: 0.8rem;
+	line-height: 1.2;
+}
+.card.card-home-preview .card-home-preview__footer .card-avatar-content small {
+	font-size: 0.7rem;
+	line-height: 1.15;
+}
+.card.card-home-preview .card-home-preview__footer .comments {
+	margin-left: auto;
+	margin-top: 0;
+}
+.card.card-home-preview .card-home-preview__footer--event {
+	display: flex;
+	align-items: center;
+	gap: 0.65rem;
+	padding: 0.65rem 1.1rem 0.75rem;
+	border-top: 1px solid #e7eaed;
+	margin-top: auto;
+}
+.card.card-home-preview .card-home-preview__footer--event .card-event-dates-content p {
+	margin: 0;
+	line-height: 1.25;
+}
+
+/* Single post hero: flex invece di title-img absolute */
+.article-title.article-title-flex {
+	position: relative;
+	height: auto;
+	min-height: 0;
+	max-height: 520px;
+	display: block;
+	padding: 0;
+	overflow: hidden;
+}
+.article-title.article-title-flex .article-title-flex__row {
+	height: auto;
+	min-height: 0;
+}
+.article-title.article-title-flex .article-title-author-container {
+	padding-top: 0;
+	padding-bottom: 0;
+	justify-content: flex-start;
+	align-self: flex-start;
+	gap: 1.5rem;
+}
+.article-title.article-title-flex .title-content {
+	padding-right: 1rem;
+}
+.article-title.article-title-flex .article-title-flex__media-col {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.article-title.article-title-flex .article-title-flex__media {
+	margin: 0;
+	width: 100%;
+	background: #e7eaed;
+	border-radius: 4px;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 220px;
+}
+.article-title.article-title-flex .article-title-flex__media img {
+	display: block;
+	width: 100%;
+	height: auto;
+	max-height: 440px;
+	object-fit: contain;
+	object-position: center;
+}
+@media (max-width: 767.98px) {
+	.article-title.article-title-flex {
+		max-height: none;
+		padding: 0;
+		overflow: visible;
+	}
+	.article-title.article-title-flex .article-title-flex__media-col {
+		margin-bottom: 1.25rem;
+	}
+	.article-title.article-title-flex .article-title-flex__media {
+		margin: 0 -15px;
+		width: calc(100% + 30px);
+		max-width: none;
+		border-radius: 0;
+		min-height: 180px;
+	}
+	.article-title.article-title-flex .article-title-flex__media img {
+		max-height: 320px;
+	}
+	.article-title.article-title-flex .article-title-author-container {
+		gap: 1rem;
+	}
+	.article-title.article-title-flex .title-content {
+		padding-right: 0;
+	}
 }
 

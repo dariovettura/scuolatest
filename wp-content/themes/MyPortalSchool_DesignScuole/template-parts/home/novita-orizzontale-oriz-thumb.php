@@ -81,7 +81,7 @@ if(is_array($tipologie_notizie) && count($tipologie_notizie)){
                                 <?php 
                                     foreach ($posts as $post) {
                                         echo '<li class="splide__slide"><div class="it-single-slide-wrapper h-100">';
-                                            get_template_part("template-parts/single/card", "horizontal-thumb");
+                                            mps_get_template_part_home_card( 'post', 'fascia_orizzontale', true );
                                         echo '</div></li>';
                                     }
                                 ?>
@@ -93,7 +93,7 @@ if(is_array($tipologie_notizie) && count($tipologie_notizie)){
                         <?php 
                             foreach ($posts as $post) {
                                 echo '<div class="col-lg-' . (12/$column) . ' mb-4">';
-                                    get_template_part("template-parts/single/card", "horizontal-thumb");
+                                    mps_get_template_part_home_card( 'post', 'fascia_orizzontale', true );
                                 echo '</div>';
                             }
                         ?>
@@ -177,7 +177,7 @@ if(is_array($tipologie_notizie) && count($tipologie_notizie)){
                             <?php 
                                 foreach ($posts as $post) {
                                     echo '<li class="splide__slide"><div class="it-single-slide-wrapper h-100">';
-                                    get_template_part("template-parts/evento/card");
+                                    mps_get_template_part_home_card( 'evento', 'fascia_orizzontale' );
                                     echo '</div></li>';
                                 }
                             ?>
@@ -189,7 +189,7 @@ if(is_array($tipologie_notizie) && count($tipologie_notizie)){
                     <?php 
                         foreach ($posts as $post) {
                             echo '<div class="col-lg-' . (12/$column) . ' mb-4">';
-                            get_template_part("template-parts/evento/card");
+                            mps_get_template_part_home_card( 'evento', 'fascia_orizzontale' );
                             echo '</div>';
                         }
                     ?>
@@ -230,7 +230,7 @@ if(is_array($tipologie_notizie) && count($tipologie_notizie)){
                             <?php 
                                 foreach ($posts as $post) {
                                     echo '<li class="splide__slide"><div class="it-single-slide-wrapper h-100">';
-                                    get_template_part("template-parts/single/card", "circolare");
+                                    mps_get_template_part_home_card( 'circolare', 'fascia_orizzontale' );
                                     echo '</div></li>';
                                 }
                             ?>
@@ -242,7 +242,7 @@ if(is_array($tipologie_notizie) && count($tipologie_notizie)){
                     <?php 
                         foreach ($posts as $post) {
                             echo '<div class="col-lg-' . (12/$column) . ' mb-4">';
-                            get_template_part("template-parts/single/card", "circolare");
+                            mps_get_template_part_home_card( 'circolare', 'fascia_orizzontale' );
                             echo '</div>';
                         }
                     ?>

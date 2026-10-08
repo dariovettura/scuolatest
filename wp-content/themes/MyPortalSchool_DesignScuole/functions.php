@@ -1079,7 +1079,7 @@ if ( ! function_exists( 'mps_render_sezioni_novita_impilate_once' ) ) {
 			$ct = 1;
 		}
 
-		$parent_dir = trailingslashit( get_template_directory() ) . 'template-parts/home/';
+		$child_dir = trailingslashit( get_stylesheet_directory() ) . 'template-parts/home/';
 
 		foreach ( dsi_get_ordine_sezioni_novita() as $sezione ) {
 			if ( $sezione === 'notizie' ) {
@@ -1092,18 +1092,18 @@ if ( ! function_exists( 'mps_render_sezioni_novita_impilate_once' ) ) {
 					if ( ! $tipologia_notizia ) {
 						continue;
 					}
-					load_template( $parent_dir . 'notizie-tipologie.php', false );
+					load_template( $child_dir . 'sezione-notizie-tipologie.php', false );
 					$ct++;
 				}
 			}
 
 			if ( $sezione === 'circolari' ) {
-				load_template( $parent_dir . 'notizie-circolari.php', false );
+				load_template( $child_dir . 'sezione-circolari.php', false );
 				$ct++;
 			}
 
 			if ( $sezione === 'eventi' ) {
-				load_template( $parent_dir . 'eventi.php', false );
+				load_template( $child_dir . 'sezione-eventi.php', false );
 				$ct++;
 			}
 		}
@@ -1140,4 +1140,81 @@ function mps_register_home_ordine_sezioni_field() {
 			'placeholder' => __( 'Seleziona e ordina le sezioni', 'design_scuole_italia' ),
 		),
 	) );
+
+	$home_options->add_field( array(
+		'id'         => 'home_card_orizzontali',
+		'name'       => __( 'Card preview orizzontali in home', 'design_scuole_italia' ),
+		'desc'       => __( 'Se attivo, le card di anteprima (home novità, in evidenza, correlati nel singolo) usano il layout preview con immagine in alto. Dopo il salvataggio svuota la cache del sito se attiva.', 'design_scuole_italia' ),
+		'type'       => 'radio_inline',
+		'default'    => 'false',
+		'options'    => array(
+			'false' => __( 'No', 'design_scuole_italia' ),
+			'true'  => __( 'Si', 'design_scuole_italia' ),
+		),
+		'sanitization_cb' => function( $value ) {
+			return ( $value === 'true' || $value === true || $value === '1' ) ? 'true' : 'false';
+		},
+	) );
+}
+
+/**
+ * @return bool
+ */
+if ( ! function_exists( 'mps_home_use_card_orizzontali' ) ) {
+	function mps_home_use_card_orizzontali() {
+		$val = dsi_get_option( 'home_card_orizzontali', 'homepage', null );
+
+		// Fallback diretto sull'option WP se cmb2 non restituisce il valore.
+		if ( $val === null || $val === false || $val === '' ) {
+			$opts = get_option( 'homepage', array() );
+			$val  = ( is_array( $opts ) && array_key_exists( 'home_card_orizzontali', $opts ) )
+				? $opts['home_card_orizzontali']
+				: 'false';
+		}
+
+		if ( is_bool( $val ) ) {
+			return $val;
+		}
+
+		return in_array( (string) $val, array( 'true', '1', 'yes', 'on' ), true );
+	}
+}
+
+/**
+ * Card home: orizzontale se configurato, altrimenti stile per contesto.
+ *
+ * @param string $content_type      post|circolare|evento
+ * @param string $context           fascia_verticale|fascia_orizzontale|impilata
+ * @param bool   $force_horizontal  forza layout orizzontale (es. template HomeStd_horizontal_thumb)
+ */
+if ( ! function_exists( 'mps_get_template_part_home_card' ) ) {
+	function mps_get_template_part_home_card( $content_type, $context = 'fascia_verticale', $force_horizontal = false ) {
+		$use_horizontal = mps_home_use_card_orizzontali() || $force_horizontal;
+
+		// Layout preview home: nuova card con immagine in alto, descrizione e argomenti.
+		if ( $use_horizontal ) {
+			get_template_part( 'template-parts/single/card', 'home-preview' );
+			return;
+		}
+
+		switch ( $content_type ) {
+			case 'post':
+				get_template_part( 'template-parts/single/card', 'vertical-thumb' );
+				break;
+			case 'circolare':
+				if ( $context === 'fascia_orizzontale' ) {
+					get_template_part( 'template-parts/single/card', 'circolare' );
+				} else {
+					get_template_part( 'template-parts/single/card', 'vertical-thumb-circolare' );
+				}
+				break;
+			case 'evento':
+				if ( $context === 'fascia_verticale' ) {
+					get_template_part( 'template-parts/single/card', 'vertical-thumb-evento' );
+				} else {
+					get_template_part( 'template-parts/evento/card' );
+				}
+				break;
+		}
+	}
 }
